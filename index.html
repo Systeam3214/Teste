@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enviar Chamado</title>
+  <script type="module">
+    // Importar as funções necessárias do Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+
+    // Configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQJs1Rr7tZClLkXNtf_HmYFNt-ko16RwU",
+      authDomain: "netflix-5c189.firebaseapp.com",
+      databaseURL: "https://netflix-5c189-default-rtdb.firebaseio.com",
+      projectId: "netflix-5c189",
+      storageBucket: "netflix-5c189.appspot.com",
+      messagingSenderId: "172649011246",
+      appId: "1:172649011246:web:004e6456564873ec2227bf",
+      measurementId: "G-WSG2ZRGNCM"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Função para enviar o chamado
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('chamadoForm');
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const titulo = document.getElementById('titulo').value;
+        const descricao = document.getElementById('descricao').value;
+
+        // Criar um novo chamado
+        const chamado = {
+          titulo: titulo,
+          descricao: descricao,
+          status: 'aberto',
+          timestamp: Date.now()
+        };
+
+        // Referência para o nó de chamados e push para gerar um novo ID
+        const novoChamadoRef = push(ref(db, 'chamados'));
+        set(novoChamadoRef, chamado)
+          .then(() => {
+            alert('Chamado enviado com sucesso!');
+            form.reset();
+          })
+          .catch(error => {
+            console.error('Erro ao enviar chamado:', error);
+          });
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Enviar Chamado</h1>
+  <form id="chamadoForm">
+    <label for="titulo">Título do Chamado:</label>
+    <input type="text" id="titulo" required><br><br>
+
+    <label for="descricao">Descrição:</label>
+    <textarea id="descricao" required></textarea><br><br>
+
+    <button type="submit">Enviar Chamado</button>
+  </form>
+
+  <br><br>
+
+  <!-- Botão para trocar para a página de listar chamados -->
+  <button onclick="window.location.href='p.html'">Ir para Lista de Chamados</button>
+
+</body>
+</html>
