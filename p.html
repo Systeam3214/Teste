@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Chamados</title>
+  <script type="module">
+    // Importar as funções necessárias do Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+
+    // Configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQJs1Rr7tZClLkXNtf_HmYFNt-ko16RwU",
+      authDomain: "netflix-5c189.firebaseapp.com",
+      databaseURL: "https://netflix-5c189-default-rtdb.firebaseio.com",
+      projectId: "netflix-5c189",
+      storageBucket: "netflix-5c189.appspot.com",
+      messagingSenderId: "172649011246",
+      appId: "1:172649011246:web:004e6456564873ec2227bf",
+      measurementId: "G-WSG2ZRGNCM"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Função para atualizar o status do chamado
+    function atualizarStatus(chamadoId, status) {
+      update(ref(db, 'chamados/' + chamadoId), { status: status })
+        .then(() => {
+          alert('Status atualizado para ' + status);
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar status:', error);
+        });
+    }
+
+    // Função para carregar a lista de chamados
+    document.addEventListener('DOMContentLoaded', () => {
+      const listaChamados = document.getElementById('listaChamados');
+      const chamadosRef = ref(db, 'chamados');
+
+      onValue(chamadosRef, (snapshot) => {
+        listaChamados.innerHTML = ''; // Limpar lista antes de atualizar
+        snapshot.forEach((childSnapshot) => {
+          const chamado = childSnapshot.val();
+          const chamadoId = childSnapshot.key;
+
+          // Criar elementos para exibir o chamado
+          const chamadoDiv = document.createElement('div');
+          chamadoDiv.innerHTML = `
+            <h3>${chamado.titulo}</h3>
+            <p>${chamado.descricao}</p>
+            <p>Status: ${chamado.status}</p>
+            <button onclick="atualizarStatus('${chamadoId}', 'fechado')">Fechar Chamado</button>
+            <hr>
+          `;
+          listaChamados.appendChild(chamadoDiv);
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Lista de Chamados</h1>
+  <div id="listaChamados"></div>
+</body>
+</html>
