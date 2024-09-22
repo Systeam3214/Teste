@@ -29,28 +29,33 @@
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('chamadoForm');
       form.addEventListener('submit', function(e) {
-        e.preventDefault();
+        e.preventDefault();  // Prevenir reload da página
+
         const titulo = document.getElementById('titulo').value;
         const descricao = document.getElementById('descricao').value;
 
-        // Criar um novo chamado
-        const chamado = {
-          titulo: titulo,
-          descricao: descricao,
-          status: 'aberto',
-          timestamp: Date.now()
-        };
+        if (titulo && descricao) {
+          // Criar um novo chamado
+          const chamado = {
+            titulo: titulo,
+            descricao: descricao,
+            status: 'aberto',
+            timestamp: Date.now()
+          };
 
-        // Referência para o nó de chamados e push para gerar um novo ID
-        const novoChamadoRef = push(ref(db, 'chamados'));
-        set(novoChamadoRef, chamado)
-          .then(() => {
-            alert('Chamado enviado com sucesso!');
-            form.reset();
-          })
-          .catch(error => {
-            console.error('Erro ao enviar chamado:', error);
-          });
+          // Referência para o nó de chamados e push para gerar um novo ID
+          const novoChamadoRef = push(ref(db, 'chamados'));
+          set(novoChamadoRef, chamado)
+            .then(() => {
+              alert('Chamado enviado com sucesso!');
+              form.reset();  // Limpar o formulário após o envio
+            })
+            .catch(error => {
+              console.error('Erro ao enviar chamado:', error);
+            });
+        } else {
+          alert('Por favor, preencha todos os campos.');
+        }
       });
     });
   </script>
@@ -70,7 +75,7 @@
   <br><br>
 
   <!-- Botão para trocar para a página de listar chamados -->
-  <button onclick="window.location.href='p.html'">Ir para Lista de Chamados</button>
+  <button onclick="window.location.href='listar-chamados.html'">Ir para Lista de Chamados</button>
 
 </body>
 </html>
